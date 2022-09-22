@@ -5,7 +5,7 @@ App::uses('AppController', 'Controller');
 
 class HomeController extends AppController {
 
-	public $uses = array('User', 'Message');
+	public $uses = array('User', 'Message', 'Reply');
 
 	public function index() {
 		
@@ -180,6 +180,64 @@ class HomeController extends AppController {
 				));
 
 				return json_encode(array('success' => 1, 'messages' => $messages));
+			}
+		}
+	}
+
+	public function reply() {
+
+		if($this->request->isAjax()) {
+
+			$this->layout = null;
+
+			$this->autoRender = false;
+
+			if($this->request->is('post')) {
+
+				$id = $this->Auth->user()[0]['User']['id'];
+
+				$data = $this->request->data;
+
+				$data['user_id'] = $id;
+
+				if($this->Reply->save($data)) {
+
+					return json_encode(array('success' => 1, 'id' => $data['message_id']));
+				} 
+			}
+		}
+	}
+
+	public function getReplies() {
+
+		if($this->request->isAjax()) {
+
+			$this->layout = null;
+
+			$this->autoRender = false;
+
+			if($this->request->is('post')) {
+
+				$user_id = $this->Auth->user()[0]['User']['id'];
+
+				$message_id = $this->request->data['message_id'];
+
+				$replies = $this->Reply->find('all', array(
+
+					'fields' => array('User.id, User.name, User.image, Reply.comment, Reply.created'),
+					'joins' => array(
+						array(
+							'type' => 'INNER',
+							'table' => 'users',
+							'alias' => 'User',
+							'conditions' => 'User.id = Reply.user_id'
+						)
+					),
+					'conditions' => array('Reply.message_id' => $message_id),
+					'order' => array('Reply.created ASC')
+				));
+
+				return json_encode(array('success' => 1, 'replies' => $replies, 'loggedID' => $this->Auth->user()[0]['User']['id']));
 			}
 		}
 	}

@@ -48,6 +48,10 @@
 
     Router::connect('/home/getmessages', array('controller' => 'home', 'action' => 'getMessages'));
 
+    Router::connect('/home/reply', array('controller' => 'home', 'action' => 'reply'));
+
+    Router::connect('/home/getreplies', array('controller' => 'home', 'action' => 'getReplies'));
+
 /**
  * Load all plugin routes. See the CakePlugin documentation on
  * how to customize the loading of plugin routes.

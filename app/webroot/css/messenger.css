@@ -171,3 +171,7 @@ img{ max-width:100%;}
           background-color: #05728f !important;
           border-color: ##05728f !important;
         }
+.chat_list:hover {
+  background:#ebebeb;
+  
+}

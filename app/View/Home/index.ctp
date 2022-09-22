@@ -93,7 +93,8 @@
         </div>
         <div class="mesgs">
           <div class="msg_history">
-            <div class="incoming_msg">
+            <div id="msg_replies"></div>
+            <!-- <div class="incoming_msg">
               <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
               <div class="received_msg">
                 <div class="received_withd_msg">
@@ -130,12 +131,15 @@
                     products, at a price anyone can afford.</p>
                   <span class="time_date"> 11:01 AM    |    Today</span></div>
               </div>
-            </div>
+            </div> -->
           </div>
           <div class="type_msg">
             <div class="input_msg_write">
-              <input type="text" class="write_msg" placeholder="Type a message" />
-              <button class="msg_send_btn" type="button"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+              <form id="replyForm">
+              <input type="hidden" id="message_id" name="message_id">
+              <input type="text" class="write_msg" placeholder="Type a message" id="comment" name="comment"/>
+              <button class="msg_send_btn"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+            </form>
             </div>
           </div>
         </div>
@@ -187,6 +191,8 @@
     getRecipients();
 
     getMessageLists();
+
+    $('.type_msg').hide();
 
     $('#btnNew').click(function(){
 
@@ -254,6 +260,104 @@
       })
     });
 
+    $('#replyForm').submit(function(e){
+
+      e.preventDefault();
+
+      var comment = $('#comment').val();
+
+      if(comment=='') {
+
+        alert('Please write something');
+
+        return false;
+      }
+
+      $.ajax({
+
+        url: '<?php echo $this->Html->url('/home/reply');?>',
+        method: 'POST',
+        data: new FormData(this),
+        contentType: false,
+        processData: false,
+        success: function(data) {
+
+          var data = JSON.parse(data);
+
+          if(data.success==1) {
+
+            $('#replyForm')[0].reset();
+
+            loadReplies(data['id']);
+
+
+          }
+        },
+        error: function(jqXHR, error, show) {
+
+          console.log(error);
+          console.log(show);
+        }
+      });
+    });
+
+    $(document).on('click', '.chat_list', function(){
+
+      var id = $(this).attr('id');
+
+      $('#message_id').val(id);
+
+      $('.type_msg').show();
+
+      $('#comment').focus();
+
+      $.ajax({
+
+        url: '<?php echo $this->Html->url('/home/getreplies');?>',
+        method: 'POST',
+        async: false,
+        data: {
+          message_id: id
+        },
+        success: function(data) {
+
+          var data = JSON.parse(data);
+
+          var loggedID = data['loggedID'];
+
+          console.log(loggedID);
+
+          data = data['replies'];
+
+          var output = "";
+
+          for(var i=0; i<data.length; i++) {
+
+            if(data[i]['User']['id']==loggedID) {
+              output+="<div class='outgoing_msg'>";
+              output+="<div class='sent_msg'>";
+              output+="<p>"+data[i]['Reply']['comment']+"</p>";
+              output+="<span class='time_date'>"+moment(data[i]['Reply']['created']).format('MMM Do YYYY, h:mm a')+"</span> </div></div>";
+            } else {
+
+              output+="<div class='incoming_msg'>";
+              output+="<div class='incoming_msg_img'>";
+              output+="<img src='<?php echo $this->webroot;?>img/"+data[i]['User']['image']+"' alt='sunil'> </div>";
+              output+="<div class='received_msg'>";
+              output+="<div class='received_withd_msg'>";
+              output+="<p>"+data[i]['Reply']['comment']+"</p>";
+              output+="<span class='time_date'>"+moment(data[i]['Reply']['created']).format('MMM Do YYYY, h:mm a')+"</span></div></div>";
+            }
+          }
+
+          console.log(output);
+
+          $('#msg_replies').html(output);
+        }
+      });
+
+    });
+
   });
 
   function getRecipients() {
@@ -299,11 +403,12 @@
 
           for(var i=0; i<data.length; i++) {
 
-            if(i==0) {
-              output+="<div class='chat_list active_chat'>";
-            } else {
-              output+="<div class='chat_list'>";
-            }
+            // if(i==0) {
+            //   output+="<div class='chat_list active_chat'>";
+            // } else {
+            //   output+="<div class='chat_list'>";
+            // }
+            output+="<div id='"+data[i]['Message']['id']+"' class='chat_list'>";
             output+="<div class='chat_people'>";
             output+="<div class='chat_img'> <img src='<?php echo $this->webroot;?>img/"+data[i]['User']['image']+"' alt='sunil'> </div>";
             output+="<div class='chat_ib'>";
@@ -314,6 +419,54 @@
           }
 
           $('#chat_list').html(output);
+        }
+      });
+    }
+
+    function loadReplies(id) {
+
+      $.ajax({
+
+        url: '<?php echo $this->Html->url('/home/getreplies');?>',
+        method: 'POST',
+        async: false,
+        data: {
+          message_id: id
+        },
+        success: function(data) {
+
+          var data = JSON.parse(data);
+
+          var loggedID = data['loggedID'];
+
+          console.log(loggedID);
+
+          data = data['replies'];
+
+          var output = "";
+
+          for(var i=0; i<data.length; i++) {
+
+            if(data[i]['User']['id']==loggedID) {
+              output+="<div class='outgoing_msg'>";
+              output+="<div class='sent_msg'>";
+              output+="<p>"+data[i]['Reply']['comment']+"</p>";
+              output+="<span class='time_date'>"+moment(data[i]['Reply']['created']).format('MMM Do YYYY, h:mm a')+"</span> </div></div>";
+            } else {
+
+              output+="<div class='incoming_msg'>";
+              output+="<div class='incoming_msg_img'>";
+              output+="<img src='<?php echo $this->webroot;?>img/"+data[i]['User']['image']+"' alt='sunil'> </div>";
+              output+="<div class='received_msg'>";
+              output+="<div class='received_withd_msg'>";
+              output+="<p>"+data[i]['Reply']['comment']+"</p>";
+              output+="<span class='time_date'>"+moment(data[i]['Reply']['created']).format('MMM Do YYYY, h:mm a')+"</span></div></div>";
+            }
+          }
+
+          console.log(output);
+
+          $('#msg_replies').html(output);
         }
       });
     }

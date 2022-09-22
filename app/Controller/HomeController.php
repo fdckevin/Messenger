@@ -5,7 +5,7 @@ App::uses('AppController', 'Controller');
 
 class HomeController extends AppController {
 
-	public $uses = array('User');
+	public $uses = array('User', 'Message');
 
 	public function index() {
 		
@@ -92,11 +92,11 @@ class HomeController extends AppController {
 
 		if($this->request->isAjax()) {
 
+			$this->layout = null;
+
+			$this->autoRender = false;
+
 			if($this->request->is('post')) {
-
-				$this->layout = null;
-
-				$this->autoRender = false;
 
 				$id = $this->Auth->user()[0]['User']['id'];
 
@@ -118,6 +118,68 @@ class HomeController extends AppController {
 				$option .= '</select>';
 
 				return json_encode(array('success' => 1, 'recipients' => $option));
+			}
+		}
+	}
+
+	public function newMessage() {
+
+		if($this->request->isAjax()) {
+
+			$this->layout = null;
+
+			$this->autoRender = false;
+
+			if($this->request->is('post')) {
+
+				$data = $this->request->data;
+
+				$data['author'] = $this->Auth->user()[0]['User']['id'];
+
+				if($this->Message->save($data)) {
+
+					return json_encode(array('success' => 1, 'message' => 'Your message has been sent'));
+				}
+			}
+		}
+	}
+
+	public function getMessages() {
+
+		if($this->request->isAjax()) {
+
+			$this->layout = null;
+
+			$this->autoRender = false;
+
+			if($this->request->is('post')) {
+
+				$id = $this->Auth->user()[0]['User']['id'];
+
+				$messages = $this->Message->find('all', array(
+					'fields' => array('User.name, User.image, Message.id, Message.body, Message.created'),
+					'joins' => array(
+						array(
+							'type' => 'INNER',
+							'table' => 'users',
+							'alias' => 'User',
+							'conditions' => 'User.id = Message.author'
+						)
+					),
+					'conditions' => array(
+						'OR' => array(
+							array(
+								'Message.author' => $id
+							),
+							array(
+								'Message.recipient' => $id
+							)
+						)
+					),
+					'order' => array('Message.created DESC')
+				));
+
+				return json_encode(array('success' => 1, 'messages' => $messages));
 			}
 		}
 	}

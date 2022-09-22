@@ -44,6 +44,10 @@
 
     Router::connect('/home/editprofile', array('controller' => 'home', 'action' => 'editProfile'));
 
+    Router::connect('/home/newmessage', array('controller' => 'home', 'action' => 'newMessage'));
+
+    Router::connect('/home/getmessages', array('controller' => 'home', 'action' => 'getMessages'));
+
 /**
  * Load all plugin routes. See the CakePlugin documentation on
  * how to customize the loading of plugin routes.

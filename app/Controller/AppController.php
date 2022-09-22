@@ -47,7 +47,7 @@ class AppController extends Controller {
             ),
             'loginAction' => array(
                 'controller' => 'pages',
-                'action' => 'login'
+                'action' => 'display'
             ),
             'authenticate' => array(
                 'Form' => array(
@@ -64,7 +64,7 @@ class AppController extends Controller {
 
     public function beforeFilter() {
 
-        $this->Auth->allow('register', 'login', 'display');
+        $this->Auth->allow('register', 'display');
     }
 
     public function beforeRender() {

@@ -18,7 +18,18 @@
             </div>
           </div>
           <div class="inbox_chat">
-            <div class="chat_list active_chat">
+            <!-- <div class="chat_list active_chat">
+              <div class="chat_people">
+                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                <div class="chat_ib">
+                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
+                  <p>Test, which is a new approach to have all solutions 
+                    astrology under one roof.</p>
+                </div>
+              </div>
+            </div> -->
+            <div id="chat_list"></div>
+           <!--  <div class="chat_list">
               <div class="chat_people">
                 <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
                 <div class="chat_ib">
@@ -77,20 +88,10 @@
                     astrology under one roof.</p>
                 </div>
               </div>
-            </div>
-            <div class="chat_list">
-              <div class="chat_people">
-                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-                <div class="chat_ib">
-                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
-                  <p>Test, which is a new approach to have all solutions 
-                    astrology under one roof.</p>
-                </div>
-              </div>
-            </div>
+            </div> -->
           </div>
         </div>
-        <div class="mesgs">
+        <!-- <div class="mesgs">
           <div class="msg_history">
             <div class="incoming_msg">
               <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
@@ -136,7 +137,7 @@
               <input type="text" class="write_msg" placeholder="Type a message" />
               <button class="msg_send_btn" type="button"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
       
@@ -185,6 +186,8 @@
 
     getRecipients();
 
+    getMessageLists();
+
     $('#btnNew').click(function(){
 
       $('#messageModal').modal('show');
@@ -194,6 +197,61 @@
 
       templateResult: recipientStyles,
       dropdownParent: $('#messageModal')
+    });
+
+    $('#messageForm').submit(function(e){
+
+      e.preventDefault();
+
+      var recipient = $('#recipient').val();
+      var body = $('#body').val();
+
+      var message = '';
+
+      if(recipient==''||body=='') {
+
+        if(recipient=='') {
+
+          message += 'Recipient is required\n';
+        }
+
+        if(body=='') {
+
+          message += 'Body is required\n';
+        }
+
+        alert(message);
+
+        return false;
+      }
+
+      $.ajax({
+        url: '<?php echo $this->Html->url('/home/newmessage');?>',
+        method: 'POST',
+        data: new FormData(this),
+        contentType: false,
+        processData: false,
+        success: function(data) {
+
+          var data = JSON.parse(data);
+
+          if(data.success==1) {
+
+            alert(data.message);
+
+            $('#messageForm')[0].reset();
+
+            $('#messageModal').modal('hide');
+
+            getMessageLists();
+          }
+        },
+        error: function(jqXHR, error, status) {
+
+          console.log(error);
+          console.log(status);
+        }
+      })
     });
 
   });
@@ -216,6 +274,40 @@
 
             $('#recipients').html(data['recipients']);
           }
+        }
+      });
+    }
+
+    function getMessageLists() {
+
+      $.ajax({
+
+        url: '<?php echo $this->Html->url('/home/getmessages');?>',
+        method: 'POST',
+        async: false,
+        data: {
+          message: 1
+        },
+        success: function(data) {
+
+          var data = JSON.parse(data);
+
+          data = data['messages'];
+
+          var output = "";
+
+          for(var i=0; i<data.length; i++) {
+
+            output+="<div class='chat_list'>";
+            output+="<div class='chat_people'>";
+            output+="<div class='chat_img'> <img src='<?php echo $this->webroot;?>img/"+data[i]['User']['image']+"' alt='sunil'> </div>";
+            output+="<div class='chat_ib'>";
+            output+="<h5>"+data[i]['User']['name']+" <span class='chat_date small text-muted'>"+moment(data[i]['Message']['created']).format('MMM Do YYYY, h:mm a')+"</span></h5>";
+            output+="<p>"+data[i]['Message']['body']+"</p>";
+            output+="</div></div></div>";
+          }
+
+          $('#chat_list').html(output);
         }
       });
     }

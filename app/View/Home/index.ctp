@@ -91,7 +91,7 @@
             </div> -->
           </div>
         </div>
-        <!-- <div class="mesgs">
+        <div class="mesgs">
           <div class="msg_history">
             <div class="incoming_msg">
               <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
@@ -137,7 +137,7 @@
               <input type="text" class="write_msg" placeholder="Type a message" />
               <button class="msg_send_btn" type="button"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
             </div>
-          </div> -->
+          </div>
         </div>
       </div>
       
@@ -296,15 +296,21 @@
 
           var output = "";
 
+
           for(var i=0; i<data.length; i++) {
 
-            output+="<div class='chat_list'>";
+            if(i==0) {
+              output+="<div class='chat_list active_chat'>";
+            } else {
+              output+="<div class='chat_list'>";
+            }
             output+="<div class='chat_people'>";
             output+="<div class='chat_img'> <img src='<?php echo $this->webroot;?>img/"+data[i]['User']['image']+"' alt='sunil'> </div>";
             output+="<div class='chat_ib'>";
             output+="<h5>"+data[i]['User']['name']+" <span class='chat_date small text-muted'>"+moment(data[i]['Message']['created']).format('MMM Do YYYY, h:mm a')+"</span></h5>";
             output+="<p>"+data[i]['Message']['body']+"</p>";
             output+="</div></div></div>";
+
           }
 
           $('#chat_list').html(output);

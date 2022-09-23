@@ -310,7 +310,11 @@
             output+="<div class='chat_img'> <img src='<?php echo $this->webroot;?>img/"+data[i]['User']['image']+"' alt='sunil'> </div>";
             output+="<div class='chat_ib'>";
             output+="<h5>"+data[i]['User']['name']+" <span class='chat_date small text-muted'>"+moment(data[i]['Message']['created']).format('MMM Do YYYY, h:mm a')+"</span></h5>";
-            output+="<p>"+data[i]['Reply']['comment']+"</p>";
+            if(data[i]['Reply']['comment']!=null) {
+              output+="<p>"+data[i]['Reply']['comment']+"</p>";
+            } else {
+              output+="<p>"+data[i]['Message']['body']+"</p>";
+            }
             output+="</div></div></div>";
 
           }

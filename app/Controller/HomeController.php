@@ -168,7 +168,7 @@ class HomeController extends AppController {
 							'conditions' => 'User.id = Message.author'
 						),
 						array(
-							'type' => 'INNER',
+							'type' => 'LEFT',
 							'table' => 'replies',
 							'alias' => 'Reply',
 							'conditions' => 'Reply.id = Message.last_reply_id'

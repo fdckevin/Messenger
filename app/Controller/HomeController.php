@@ -136,6 +136,8 @@ class HomeController extends AppController {
 
 				$data['author'] = $this->Auth->user()[0]['User']['id'];
 
+				$data['last_reply_id'] = 0;
+
 				if($this->Message->save($data)) {
 
 					return json_encode(array('success' => 1, 'message' => 'Your message has been sent'));
@@ -157,13 +159,19 @@ class HomeController extends AppController {
 				$id = $this->Auth->user()[0]['User']['id'];
 
 				$messages = $this->Message->find('all', array(
-					'fields' => array('User.name, User.image, Message.id, Message.body, Message.created'),
+					'fields' => array('User.name, User.image, Message.id, Message.body, Message.created, Reply.comment'),
 					'joins' => array(
 						array(
 							'type' => 'INNER',
 							'table' => 'users',
 							'alias' => 'User',
 							'conditions' => 'User.id = Message.author'
+						),
+						array(
+							'type' => 'INNER',
+							'table' => 'replies',
+							'alias' => 'Reply',
+							'conditions' => 'Reply.id = Message.last_reply_id'
 						)
 					),
 					'conditions' => array(
@@ -201,6 +209,12 @@ class HomeController extends AppController {
 				$data['user_id'] = $id;
 
 				if($this->Reply->save($data)) {
+
+					$this->Message->read(null, $data['message_id']);
+					$this->Message->set(array(
+						'last_reply_id' => $this->Reply->getLastInsertId()
+					));
+					$this->Message->save();
 
 					return json_encode(array('success' => 1, 'id' => $data['message_id']));
 				} 

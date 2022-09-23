@@ -92,6 +92,7 @@
 
       console.log('load conversation on room '+room);
       loadReplies(room);
+      getMessageLists();
     });
 
     socket.on('receive-typing', (data) => {
@@ -166,9 +167,9 @@
 
             $('#messageModal').modal('hide');
 
-            socket.emit('message', 1)
+            getMessageLists();
 
-            // getMessageLists();
+            socket.emit('message', 1)
           }
         },
         error: function(jqXHR, error, status) {
@@ -208,6 +209,7 @@
             $('#replyForm')[0].reset();
 
             loadReplies(data['id']);
+            getMessageLists();
             socket.emit('reply', data['id']);
 
 
@@ -308,7 +310,7 @@
             output+="<div class='chat_img'> <img src='<?php echo $this->webroot;?>img/"+data[i]['User']['image']+"' alt='sunil'> </div>";
             output+="<div class='chat_ib'>";
             output+="<h5>"+data[i]['User']['name']+" <span class='chat_date small text-muted'>"+moment(data[i]['Message']['created']).format('MMM Do YYYY, h:mm a')+"</span></h5>";
-            output+="<p>"+data[i]['Message']['body']+"</p>";
+            output+="<p>"+data[i]['Reply']['comment']+"</p>";
             output+="</div></div></div>";
 
           }

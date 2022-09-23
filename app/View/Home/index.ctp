@@ -18,120 +18,12 @@
             </div>
           </div>
           <div class="inbox_chat">
-            <!-- <div class="chat_list active_chat">
-              <div class="chat_people">
-                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-                <div class="chat_ib">
-                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
-                  <p>Test, which is a new approach to have all solutions 
-                    astrology under one roof.</p>
-                </div>
-              </div>
-            </div> -->
             <div id="chat_list"></div>
-           <!--  <div class="chat_list">
-              <div class="chat_people">
-                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-                <div class="chat_ib">
-                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
-                  <p>Test, which is a new approach to have all solutions 
-                    astrology under one roof.</p>
-                </div>
-              </div>
-            </div>
-            <div class="chat_list">
-              <div class="chat_people">
-                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-                <div class="chat_ib">
-                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
-                  <p>Test, which is a new approach to have all solutions 
-                    astrology under one roof.</p>
-                </div>
-              </div>
-            </div>
-            <div class="chat_list">
-              <div class="chat_people">
-                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-                <div class="chat_ib">
-                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
-                  <p>Test, which is a new approach to have all solutions 
-                    astrology under one roof.</p>
-                </div>
-              </div>
-            </div>
-            <div class="chat_list">
-              <div class="chat_people">
-                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-                <div class="chat_ib">
-                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
-                  <p>Test, which is a new approach to have all solutions 
-                    astrology under one roof.</p>
-                </div>
-              </div>
-            </div>
-            <div class="chat_list">
-              <div class="chat_people">
-                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-                <div class="chat_ib">
-                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
-                  <p>Test, which is a new approach to have all solutions 
-                    astrology under one roof.</p>
-                </div>
-              </div>
-            </div>
-            <div class="chat_list">
-              <div class="chat_people">
-                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-                <div class="chat_ib">
-                  <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
-                  <p>Test, which is a new approach to have all solutions 
-                    astrology under one roof.</p>
-                </div>
-              </div>
-            </div> -->
           </div>
         </div>
         <div class="mesgs">
           <div class="msg_history">
             <div id="msg_replies"></div>
-            <!-- <div class="incoming_msg">
-              <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-              <div class="received_msg">
-                <div class="received_withd_msg">
-                  <p>Test which is a new approach to have all
-                    solutions</p>
-                  <span class="time_date"> 11:01 AM    |    June 9</span></div>
-              </div>
-            </div>
-            <div class="outgoing_msg">
-              <div class="sent_msg">
-                <p>Test which is a new approach to have all
-                  solutions</p>
-                <span class="time_date"> 11:01 AM    |    June 9</span> </div>
-            </div>
-            <div class="incoming_msg">
-              <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-              <div class="received_msg">
-                <div class="received_withd_msg">
-                  <p>Test, which is a new approach to have</p>
-                  <span class="time_date"> 11:01 AM    |    Yesterday</span></div>
-              </div>
-            </div>
-            <div class="outgoing_msg">
-              <div class="sent_msg">
-                <p>Apollo University, Delhi, India Test</p>
-                <span class="time_date"> 11:01 AM    |    Today</span> </div>
-            </div>
-            <div class="incoming_msg">
-              <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
-              <div class="received_msg">
-                <div class="received_withd_msg">
-                  <p>We work directly with our designers and suppliers,
-                    and sell direct to you, which means quality, exclusive
-                    products, at a price anyone can afford.</p>
-                  <span class="time_date"> 11:01 AM    |    Today</span></div>
-              </div>
-            </div> -->
           </div>
           <div class="type_msg">
             <div class="input_msg_write">
@@ -143,11 +35,7 @@
             </div>
           </div>
         </div>
-      </div>
-      
-      
-     <!--  <p class="text-center top_spac"> Design by <a target="_blank" href="https://www.linkedin.com/in/sunil-rajput-nattho-singh/">Sunil Rajput</a></p> -->
-      
+      </div>  
     </div>
 
     <!-- The Modal -->
@@ -187,6 +75,21 @@
 <script type="text/javascript">
   
   $(document).ready(function(){
+
+    var socket = io.connect('http://localhost:4000');
+
+    socket.on('receive-message', (msg) => {
+
+      if(msg==1) {
+        getMessageLists();
+      }
+    });
+
+    socket.on('receive-reply', (room) => {
+
+      console.log('load conversation on room '+room);
+      loadReplies(room);
+    });
 
     getRecipients();
 
@@ -249,7 +152,9 @@
 
             $('#messageModal').modal('hide');
 
-            getMessageLists();
+            socket.emit('message', 1)
+
+            // getMessageLists();
           }
         },
         error: function(jqXHR, error, status) {
@@ -288,7 +193,8 @@
 
             $('#replyForm')[0].reset();
 
-            loadReplies(data['id']);
+            // loadReplies(data['id']);
+            socket.emit('reply', data['id']);
 
 
           }
@@ -311,50 +217,9 @@
 
       $('#comment').focus();
 
-      $.ajax({
+      loadReplies(id);
 
-        url: '<?php echo $this->Html->url('/home/getreplies');?>',
-        method: 'POST',
-        async: false,
-        data: {
-          message_id: id
-        },
-        success: function(data) {
-
-          var data = JSON.parse(data);
-
-          var loggedID = data['loggedID'];
-
-          console.log(loggedID);
-
-          data = data['replies'];
-
-          var output = "";
-
-          for(var i=0; i<data.length; i++) {
-
-            if(data[i]['User']['id']==loggedID) {
-              output+="<div class='outgoing_msg'>";
-              output+="<div class='sent_msg'>";
-              output+="<p>"+data[i]['Reply']['comment']+"</p>";
-              output+="<span class='time_date'>"+moment(data[i]['Reply']['created']).format('MMM Do YYYY, h:mm a')+"</span> </div></div>";
-            } else {
-
-              output+="<div class='incoming_msg'>";
-              output+="<div class='incoming_msg_img'>";
-              output+="<img src='<?php echo $this->webroot;?>img/"+data[i]['User']['image']+"' alt='sunil'> </div>";
-              output+="<div class='received_msg'>";
-              output+="<div class='received_withd_msg'>";
-              output+="<p>"+data[i]['Reply']['comment']+"</p>";
-              output+="<span class='time_date'>"+moment(data[i]['Reply']['created']).format('MMM Do YYYY, h:mm a')+"</span></div></div>";
-            }
-          }
-
-          console.log(output);
-
-          $('#msg_replies').html(output);
-        }
-      });
+      socket.emit("join", id);
 
     });
 

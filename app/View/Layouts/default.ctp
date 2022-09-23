@@ -46,6 +46,8 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 
 		echo $this->Html->script('https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.21.0/moment.min.js');
 
+    echo $this->Html->script('http://localhost:4000/socket.io/socket.io.js');
+
 		echo $this->fetch('meta');
 		echo $this->fetch('css');
 		echo $this->fetch('script');

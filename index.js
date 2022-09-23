@@ -27,6 +27,10 @@ io.on('connection', (socket) => {
     socket.to(room).emit('receive-reply', room);
   });
 
+  socket.on('typing', (data) => {
+   io.emit('receive-typing', data);
+  });
+
 
 
 });

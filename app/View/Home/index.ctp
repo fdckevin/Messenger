@@ -31,6 +31,7 @@
               <input type="hidden" id="message_id" name="message_id">
               <input type="text" class="write_msg" placeholder="Type a message" id="comment" name="comment"/>
               <button class="msg_send_btn"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+              <div class="text-muted mt-2" id="typing"></div>
             </form>
             </div>
           </div>
@@ -73,10 +74,12 @@
   </div>
 </div>
 <script type="text/javascript">
+
+  var socket = io.connect('http://localhost:4000');
+
+  var timeout;
   
   $(document).ready(function(){
-
-    var socket = io.connect('http://localhost:4000');
 
     socket.on('receive-message', (msg) => {
 
@@ -90,6 +93,17 @@
       console.log('load conversation on room '+room);
       loadReplies(room);
     });
+
+    socket.on('receive-typing', (data) => {
+
+      if (data) {
+          $('#typing').html(data);
+      } else {
+          $('#typing').html("");
+      }
+    });
+
+    timeoutFunction();
 
     getRecipients();
 
@@ -193,7 +207,7 @@
 
             $('#replyForm')[0].reset();
 
-            // loadReplies(data['id']);
+            loadReplies(data['id']);
             socket.emit('reply', data['id']);
 
 
@@ -223,7 +237,23 @@
 
     });
 
+    $('#comment').keypress(function(){
+
+      console.log('happening');
+      typing = true;
+      socket.emit('typing', 'Someone is typing...');
+      clearTimeout(timeout);
+      timeout = setTimeout(timeoutFunction, 3000);
+    });
+
   });
+
+  function timeoutFunction() {
+
+      typing = false;
+      socket.emit('typing', false);
+
+  }
 
   function getRecipients() {
 
